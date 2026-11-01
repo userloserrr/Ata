@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ata</title>
 <style>
-:root{--bg:#f6f4ef;--sf:#fff;--tx:#1d1b16;--mu:#7a756a;--ac:#b4472b;--ac2:#fff;--bd:#e3ded2;--ub:#b4472b;--ut:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);[...]}
+:root{--bg:#f6f4ef;--sf:#fff;--tx:#1d1b16;--mu:#7a756a;--ac:#b4472b;--ac2:#fff;--bd:#e3ded2;--ub:#b4472b;--ut:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);[...]} 
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16140f;--sf:#221f18;--tx:#f1ede3;--mu:#a29b8a;--ac:#e0704f;--ac2:#16140f;--bd:#363124;--ub:#e0704f;--ut:#16140f;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#16140f;--sf:#221f18;--tx:#f1ede3;--mu:#a29b8a;--ac:#e0704f;--ac2:#16140f;--bd:#363124;--ub:#e0704f;--ut:#16140f;color-scheme:dark}
 *{box-sizing:border-box}
@@ -30,11 +30,11 @@ textarea{flex:1;resize:none;max-height:120px;border:1px solid var(--bd);backgrou
 .ib{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:19px;cursor:pointer;flex:none}
 .ib.go{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
 .ib.rec{background:#c0392b;color:#fff;border-color:#c0392b}
-.mb{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}.row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mb label{font-size:14px;color:var(--mu);display:flex[...]
-canvas{width:100%;border:1px solid var(--bd);border-radius:10px}#thumbs{display:flex;gap:8px;flex-wrap:wrap}#thumbs div{position:relative}#thumbs img{height:48px;border-radius:6px;display:block}#t[...]
+.mb{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}.row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mb label{font-size:14px;color:var(--mu);display:flex}
+canvas{width:100%;border:1px solid var(--bd);border-radius:10px}#thumbs{display:flex;gap:8px;flex-wrap:wrap}#thumbs div{position:relative}#thumbs img{height:48px;border-radius:6px;display:block}#thumbs b{position:absolute;top:-6px;right:-6px;background:rgba(0,0,0,.75);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
 #prev img{margin-right:4px}
 header{flex-wrap:wrap;gap:8px}header h1{min-width:90px}
-#vthumbs{display:flex;gap:8px;flex-wrap:wrap}#vthumbs div{position:relative}#vthumbs img{height:48px;border-radius:6px;display:block}#vthumbs b{position:absolute;top:-6px;right:-6px;background:var[...]
+#vthumbs{display:flex;gap:8px;flex-wrap:wrap}#vthumbs div{position:relative}#vthumbs img{height:48px;border-radius:6px;display:block}#vthumbs b{position:absolute;top:-6px;right:-6px;background:rgba(0,0,0,.75);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
 .mb select,.mb input[type=text]{border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px}
 </style>
 </head>
@@ -51,7 +51,7 @@ header{flex-wrap:wrap;gap:8px}header h1{min-width:90px}
 <textarea id="in" rows="1" placeholder="Ata’ya yaz…"></textarea>
 <button class="ib go" id="send" aria-label="Gönder">➤</button>
 </div>
-<input type="file" id="file" accept="image/*,.txt,.md,.csv,.json,.pdf" multiple hidden>
+<input type="file" id="file" accept="image/*,.txt,.md,.csv,.json,.pdf,.js,.ts,.py,.java,.kt,.css,.yaml,.yml,.xml,.html" multiple hidden>
 <div id="fileMeta" style="display:none;margin-top:8px;color:var(--mu);font-size:12px"></div>
 </div>
 <div id="mp" style="display:none;position:fixed;inset:0;z-index:20;background:var(--bg);flex-direction:column;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)">
@@ -128,18 +128,14 @@ function readTextFile(file){return new Promise(function(resolve,reject){
   reader.onload=function(){resolve(String(reader.result||""))};
   reader.onerror=function(){reject(new Error("Dosya okunamadı"))};
   if(file.type==="application/pdf"||/\.pdf$/i.test(file.name)){
-    resolve("[PDF dosyası eklendi. İçerik okutulamıyor; kullanıcı metniyle birlikte analiz için açıklama ekleyin.]")
+    resolve("[PDF dosyası eklendi. İçerik okutulamıyor; kullanıcı metniyle birlikte analiz için açıklama ekleyin.]");
     return;
   }
-  if(file.type&&file.type.indexOf("text")===0 || /\.(txt|md|csv|json|log|xml|html)$/i.test(file.name)){
+  if((file.type&&file.type.indexOf("text")===0) || /\.(txt|md|csv|json|log|xml|html|js|ts|py|java|kt|css|yaml|yml|ini)$/i.test(file.name)){
     reader.readAsText(file,'utf-8');
     return;
   }
-  if(/\.(js|ts|py|java|kt|css|yaml|yml|ini)$/i.test(file.name)){
-    reader.readAsText(file,'utf-8');
-    return;
-  }
-  resolve("[Desteklenmeyen dosya türü. Görsel olarak eklenebilir; metin analizi için .txt/.md/.csv/.json gibi dosyalar kullanın.]")
+  resolve("[Desteklenmeyen dosya türü. Görsel olarak eklenebilir; metin analizi için .txt/.md/.csv/.json/.js/.py gibi dosyalar kullanın.]");
 })}
 function showPrev(){var p=$("pi");p.innerHTML="";imgs.forEach(function(f){var i=document.createElement("img");i.src=URL.createObjectURL(f);p.appendChild(i)});$("prev").style.display=imgs.length?"block":"none"}
 $("tts").onclick=function(){ttsOn=!ttsOn;this.classList.toggle("on",ttsOn);if(!ttsOn&&window.speechSynthesis)speechSynthesis.cancel()};
@@ -160,8 +156,9 @@ $("file").onchange=async function(){
   var bad=0;
   for(var i=0;i<fs.length;i++){
     var f=fs[i];
-    if(f.type&&f.type.indexOf("image/")===0 || /\.(png|jpg|jpeg|webp|gif|bmp)$/i.test(f.name)){
-      imgs.push(f); continue;
+    if((f.type&&f.type.indexOf("image/")===0) || /\.(png|jpg|jpeg|webp|gif|bmp)$/i.test(f.name)){
+      imgs.push(f);
+      continue;
     }
     try{
       var text=await readTextFile(f);
@@ -220,7 +217,7 @@ async function mk0(){
  var mt=["video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm","video/mp4"].filter(function(m){return MediaRecorder.isTypeSupported(m)})[0];
  vext=mt&&mt.indexOf("mp4")>-1?"mp4":"webm";
  var ch=[],mr,ac=null,st=cv.captureStream(30),mus=$("vmus").value;
- if(mus!=="none"&&(mus!=="file"||vaud)){try{ac=new (window.AudioContext||window.webkitAudioContext)();try{await ac.resume()}catch(e){}var dst=ac.createMediaStreamDestination();var out=dst.stream;var dur=Math.max(1,Math.ceil(T/1000));gen(ac,out,mus==="calm"?"calm":"happy",dur);st=out}catch(e){}} 
+ if(mus!=="none"&&(mus!=="file"||vaud)){try{ac=new (window.AudioContext||window.webkitAudioContext)();try{await ac.resume()}catch(e){}var dst=ac.createMediaStreamDestination();var out=dst.stream;var dur=Math.max(1,Math.ceil(T/1000));gen(ac,out,mus==="calm"?"calm":"happy",dur);st=out}catch(e){}}
  var t=0;
  b.textContent="🎬 Oluşturuluyor…";
  $("vst").textContent="Video oluşturuluyor…";
